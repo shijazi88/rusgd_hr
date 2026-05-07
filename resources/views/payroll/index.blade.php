@@ -129,10 +129,10 @@
     {{-- Run Payroll Modal --}}
     <div x-show="showRun" style="display:none;"
          class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-        <div class="bg-surface-container w-full max-w-lg rounded-2xl border border-outline-variant shadow-2xl overflow-hidden">
+        <div class="bg-surface-container w-full max-w-lg rounded-2xl border border-outline-variant shadow-2xl">
 
             {{-- Modal header --}}
-            <div class="px-6 py-4 border-b border-outline-variant flex justify-between items-center bg-surface-container-low">
+            <div class="px-6 py-4 border-b border-outline-variant flex justify-between items-center bg-surface-container-low rounded-t-2xl">
                 <h2 class="font-h1 text-[18px] text-on-surface font-bold">تشغيل مسير الرواتب</h2>
                 <button @click="showRun=false" class="text-on-surface-variant hover:text-on-surface transition-colors">
                     <span class="material-symbols-outlined">close</span>
@@ -177,7 +177,7 @@
             </div>
 
             {{-- Modal footer --}}
-            <div class="px-6 py-4 bg-surface-container-low border-t border-outline-variant flex gap-4">
+            <div class="px-6 py-4 bg-surface-container-low border-t border-outline-variant flex gap-4 rounded-b-2xl">
                 <button @click="submitRun()" :disabled="running"
                         class="flex-1 bg-primary-container text-white py-3 rounded-lg font-bold text-sm hover:brightness-110 active:scale-95 transition-all disabled:opacity-60">
                     <span x-text="running ? 'جارٍ التشغيل...' : 'تأكيد وتشغيل المسير'"></span>

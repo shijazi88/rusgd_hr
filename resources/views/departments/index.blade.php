@@ -141,9 +141,9 @@
     {{-- ── Department Create / Edit Modal ──────────────────────────────── --}}
     <div x-show="showModal" style="display:none;"
          class="fixed inset-0 bg-black/70 backdrop-blur-[4px] z-50 flex items-center justify-center p-4">
-        <div class="bg-surface-container w-full max-w-[500px] rounded-[20px] shadow-2xl border border-outline-variant overflow-hidden flex flex-col">
+        <div class="bg-surface-container w-full max-w-[500px] rounded-[20px] shadow-2xl border border-outline-variant flex flex-col">
 
-            <div class="px-6 py-5 border-b border-outline-variant flex justify-between items-center border-r-4 border-r-primary-container bg-surface-container-low">
+            <div class="px-6 py-5 border-b border-outline-variant flex justify-between items-center border-r-4 border-r-primary-container bg-surface-container-low rounded-t-[20px]">
                 <h3 class="font-h2 text-on-surface" x-text="editingId ? 'تعديل القسم' : 'إضافة قسم جديد'"></h3>
                 <button @click="showModal=false" class="text-on-surface-variant hover:text-on-surface transition-colors">
                     <span class="material-symbols-outlined">close</span>
@@ -195,7 +195,7 @@
                 <div x-show="formErr" class="text-error text-sm" x-text="formErr"></div>
             </div>
 
-            <div class="px-6 py-4 bg-surface-container-low border-t border-outline-variant flex justify-end gap-3">
+            <div class="px-6 py-4 bg-surface-container-low border-t border-outline-variant flex justify-end gap-3 rounded-b-[20px]">
                 <button @click="showModal=false" class="rs-btn-cancel px-5 py-2.5 text-sm font-semibold">إلغاء</button>
                 <button @click="saveDept()" :disabled="saving"
                         class="bg-primary-container text-white px-5 py-2.5 rounded-lg font-body-main font-semibold hover:brightness-110 transition-all text-sm disabled:opacity-60">
@@ -208,9 +208,9 @@
     {{-- ── Job Title Create / Edit Modal ──────────────────────────────── --}}
     <div x-show="showJtModal" style="display:none;"
          class="fixed inset-0 bg-black/70 backdrop-blur-[4px] z-50 flex items-center justify-center p-4">
-        <div class="bg-surface-container w-full max-w-[500px] rounded-[20px] shadow-2xl border border-outline-variant overflow-hidden flex flex-col">
+        <div class="bg-surface-container w-full max-w-[500px] rounded-[20px] shadow-2xl border border-outline-variant flex flex-col">
 
-            <div class="px-6 py-5 border-b border-outline-variant flex justify-between items-center border-r-4 border-r-primary-container bg-surface-container-low">
+            <div class="px-6 py-5 border-b border-outline-variant flex justify-between items-center border-r-4 border-r-primary-container bg-surface-container-low rounded-t-[20px]">
                 <h3 class="font-h2 text-on-surface" x-text="editingJtId ? 'تعديل المسمى الوظيفي' : 'إضافة مسمى وظيفي جديد'"></h3>
                 <button @click="showJtModal=false" class="text-on-surface-variant hover:text-on-surface transition-colors">
                     <span class="material-symbols-outlined">close</span>
@@ -234,7 +234,7 @@
                 <div x-show="jtErr" class="text-error text-sm" x-text="jtErr"></div>
             </div>
 
-            <div class="px-6 py-4 bg-surface-container-low border-t border-outline-variant flex justify-end gap-3">
+            <div class="px-6 py-4 bg-surface-container-low border-t border-outline-variant flex justify-end gap-3 rounded-b-[20px]">
                 <button @click="showJtModal=false" class="rs-btn-cancel px-5 py-2.5 text-sm font-semibold">إلغاء</button>
                 <button @click="saveJobTitle()" :disabled="savingJt"
                         class="bg-primary-container text-white px-5 py-2.5 rounded-lg font-body-main font-semibold hover:brightness-110 transition-all text-sm disabled:opacity-60">
