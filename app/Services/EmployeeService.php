@@ -57,7 +57,7 @@ class EmployeeService
         return [
             'id'          => $employee->id,
             'name'        => $employee->name,
-            'job_title'   => $employee->job_title,
+            'job_title'   => $employee->jobTitle?->name,
             'department'  => $employee->department?->name,
             'status'      => $employee->status->value,
             'children'    => $employee->directReports

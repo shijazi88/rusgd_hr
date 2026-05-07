@@ -30,7 +30,7 @@ class AuthController extends Controller
 
         return $this->success([
             'token' => $result['token'],
-            'user'  => UserResource::make($result['user']->load('employee.department')),
+            'user'  => UserResource::make($result['user']->load(['employee.department', 'employee.jobTitle'])),
         ], 'تم تسجيل الدخول بنجاح.');
     }
 
@@ -49,7 +49,7 @@ class AuthController extends Controller
     public function me(Request $request): JsonResponse
     {
         return $this->success(
-            UserResource::make($request->user()->load('employee.department'))
+            UserResource::make($request->user()->load(['employee.department', 'employee.jobTitle']))
         );
     }
 }

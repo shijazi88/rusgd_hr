@@ -20,9 +20,9 @@ class RoleSeeder extends Seeder
 
         $allPerms    = DB::table('permissions')->pluck('id', 'slug');
         $ceoPerms    = $allPerms->values()->all();
-        $directorPerms = $allPerms->only(['view_employees','edit_employees','approve_leaves','approve_purchases','view_payroll','manage_rules','manage_departments','view_reports','manage_shifts'])->values()->all();
+        $directorPerms = $allPerms->only(['view_employees','edit_employees','approve_leaves','approve_purchases','view_payroll','manage_rules','manage_departments','manage_contract_types','view_reports','manage_shifts'])->values()->all();
         $managerPerms  = $allPerms->only(['view_employees','approve_leaves','approve_purchases','view_payroll','manage_shifts'])->values()->all();
-        $hrPerms       = $allPerms->only(['view_employees','edit_employees','approve_leaves','approve_purchases','view_payroll','view_reports'])->values()->all();
+        $hrPerms       = $allPerms->only(['view_employees','edit_employees','approve_leaves','approve_purchases','manage_departments','manage_contract_types','manage_company_settings','view_payroll','view_reports'])->values()->all();
         $financePerms  = $allPerms->only(['view_employees','approve_purchases','view_payroll','edit_payroll','run_payroll'])->values()->all();
         $employeePerms = $allPerms->only(['view_employees'])->values()->all();
 
@@ -36,10 +36,11 @@ class RoleSeeder extends Seeder
         ];
 
         foreach ($roles as $role) {
-            $roleId = DB::table('roles')->insertGetId(array_merge($role, [
+            $roleId = DB::table('roles')->insertGetId([
+                ...$role,
                 'created_at' => now(),
                 'updated_at' => now(),
-            ]));
+            ]);
 
             foreach ($rolePermMap[$role['slug']] as $permId) {
                 DB::table('role_permissions')->insert([

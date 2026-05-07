@@ -14,7 +14,7 @@ class PayrollItemResource extends JsonResource
             'employee'            => $this->whenLoaded('employee', fn () => [
                 'id'         => $this->employee->id,
                 'name'       => $this->employee->name,
-                'job_title'  => $this->employee->job_title,
+                'job_title'  => $this->employee->jobTitle?->name,
                 'department' => $this->employee->department?->name,
             ]),
             'base_salary'         => (float) $this->base_salary,

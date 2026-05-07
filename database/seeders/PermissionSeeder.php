@@ -24,6 +24,8 @@ class PermissionSeeder extends Seeder
             ['name' => 'عرض التقارير',               'slug' => 'view_reports'],
             ['name' => 'عرض سجل التدقيق',           'slug' => 'view_audit_logs'],
             ['name' => 'إدارة الورديات',             'slug' => 'manage_shifts'],
+            ['name' => 'إدارة إعدادات الشركة',       'slug' => 'manage_company_settings'],
+            ['name' => 'إدارة أنواع العقود',          'slug' => 'manage_contract_types'],
         ];
 
         foreach ($permissions as $perm) {

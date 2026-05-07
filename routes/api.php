@@ -3,6 +3,9 @@
 use App\Http\Controllers\Api\V1\ActivityLogController;
 use App\Http\Controllers\Api\V1\ApprovalRuleController;
 use App\Http\Controllers\Api\V1\ApproveLeaveController;
+use App\Http\Controllers\Api\V1\CompanySettingsController;
+use App\Http\Controllers\Api\V1\ContractTypeController;
+use App\Http\Controllers\Api\V1\JobTitleController;
 use App\Http\Controllers\Api\V1\ApprovePurchaseController;
 use App\Http\Controllers\Api\V1\ApprovalsController;
 use App\Http\Controllers\Api\V1\AssignRoleController;
@@ -64,6 +67,22 @@ Route::prefix('v1')->group(function () {
         Route::post('departments',        [DepartmentController::class, 'store']);
         Route::put('departments/{id}',    [DepartmentController::class, 'update']);
         Route::delete('departments/{id}', [DepartmentController::class, 'destroy']);
+
+        // Job Titles (per-department; pass ?department_id=X to scope index)
+        Route::get('job-titles',          [JobTitleController::class, 'index']);
+        Route::post('job-titles',         [JobTitleController::class, 'store']);
+        Route::put('job-titles/{id}',     [JobTitleController::class, 'update']);
+        Route::delete('job-titles/{id}',  [JobTitleController::class, 'destroy']);
+
+        // Contract Types
+        Route::get('contract-types',         [ContractTypeController::class, 'index']);
+        Route::post('contract-types',        [ContractTypeController::class, 'store']);
+        Route::put('contract-types/{id}',    [ContractTypeController::class, 'update']);
+        Route::delete('contract-types/{id}', [ContractTypeController::class, 'destroy']);
+
+        // Company Settings (single-tenant key/value)
+        Route::get('company-settings', [CompanySettingsController::class, 'show']);
+        Route::put('company-settings', [CompanySettingsController::class, 'update']);
 
         // Leave Types
         Route::get('leave-types', LeaveTypeController::class);

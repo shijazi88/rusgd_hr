@@ -27,7 +27,12 @@ class PayrollService
 
     public function getById(int $id): PayrollRun
     {
-        $run = PayrollRun::with(['runBy', 'items.employee.department'])->find($id);
+        $run = PayrollRun::with([
+            'runBy',
+            'items.employee.department',
+            'items.employee.jobTitle',
+            'items.employee.contractType',
+        ])->find($id);
 
         if (!$run) {
             abort(404, 'مسير الرواتب غير موجود.');

@@ -6,7 +6,18 @@
       "Bash(php -l app/Http/Controllers/Api/V1/LeaveRequestController.php)",
       "Bash(php -l app/Http/Controllers/Api/V1/PurchaseRequestController.php)",
       "Bash(git init *)",
-      "Bash(git add *)"
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git remote *)",
+      "Bash(git push *)",
+      "Bash(php -l app/Http/Controllers/Api/V1/DepartmentController.php)",
+      "Bash(php -l app/Http/Requests/Employee/StoreEmployeeRequest.php)",
+      "Bash(php -l app/Http/Requests/Employee/UpdateEmployeeRequest.php)",
+      "Bash(php -l app/Http/Controllers/Api/V1/ContractTypeController.php)",
+      "Bash(php -l app/Http/Controllers/Api/V1/JobTitleController.php)",
+      "Bash(php -l app/Http/Controllers/Api/V1/AuthController.php)",
+      "Bash(taskkill /FI \"IMAGENAME eq php.exe\" /F)",
+      "Bash(powershell -Command \"Get-Process php -ErrorAction SilentlyContinue | Stop-Process -Force\")"
     ]
   }
 }

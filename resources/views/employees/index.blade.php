@@ -111,7 +111,7 @@
                                              x-text="initials(emp.name)"></div>
                                         <div>
                                             <p class="font-semibold text-on-background" x-text="emp.name"></p>
-                                            <p class="text-xs text-outline" x-text="emp.job_title || '—'"></p>
+                                            <p class="text-xs text-outline" x-text="(emp.job_title?.name || emp.job_title) || '—'"></p>
                                         </div>
                                     </div>
                                 </td>
@@ -177,15 +177,9 @@
                 </div>
                 <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">المسمى الوظيفي</label>
-                        <input x-model="form.job_title" type="text" class="w-full bg-[#071426] border border-[#0B1F3A] text-slate-200 rounded-lg py-2.5 px-4 focus:ring-1 focus:ring-primary-container focus:border-primary-container outline-none text-sm">
-                    </div>
-                    <div>
                         <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">رقم الهاتف</label>
                         <input x-model="form.phone" type="tel" dir="ltr" class="w-full bg-[#071426] border border-[#0B1F3A] text-slate-200 rounded-lg py-2.5 px-4 focus:ring-1 focus:ring-primary-container focus:border-primary-container outline-none text-sm">
                     </div>
-                </div>
-                <div class="grid grid-cols-2 gap-4">
                     <div>
                         <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">القسم</label>
                         <div x-data="{ open: false }" @click.outside="open = false" class="relative">
@@ -194,30 +188,67 @@
                                 <span class="material-symbols-outlined rs-trigger-icon">expand_more</span>
                             </button>
                             <div x-show="open" class="rs-panel" x-transition style="display:none">
-                                <button type="button" @click="form.department_id=''; open=false"
+                                <button type="button" @click="onDepartmentChange(''); open=false"
                                         class="rs-opt" :class="form.department_id==='' ? 'selected':''">اختر القسم</button>
                                 <template x-for="d in departments" :key="d.id">
-                                    <button type="button" @click="form.department_id=d.id; open=false"
+                                    <button type="button" @click="onDepartmentChange(d.id); open=false"
                                             class="rs-opt" :class="String(form.department_id)===String(d.id) ? 'selected':''"
                                             x-text="d.name"></button>
                                 </template>
                             </div>
                         </div>
                     </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    {{-- Job Title (cascades from department) --}}
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">المسمى الوظيفي</label>
+                        <div x-data="{ open: false }" @click.outside="open = false" class="relative">
+                            <button type="button" @click="form.department_id ? (open = !open) : null"
+                                    class="rs-trigger" :data-open="open"
+                                    :class="!form.department_id ? 'opacity-60 cursor-not-allowed' : ''">
+                                <span x-text="jobTitles.find(j => String(j.id)===String(form.job_title_id))?.name
+                                              || (form.department_id ? 'اختر المسمى الوظيفي' : 'اختر القسم أولاً')"></span>
+                                <span class="material-symbols-outlined rs-trigger-icon">expand_more</span>
+                            </button>
+                            <div x-show="open" class="rs-panel" x-transition style="display:none">
+                                <template x-if="loadingJobTitles">
+                                    <div class="rs-opt text-on-surface-variant">جارٍ التحميل...</div>
+                                </template>
+                                <template x-if="!loadingJobTitles && jobTitles.length === 0">
+                                    <div class="rs-opt text-on-surface-variant">
+                                        لا توجد مسميات وظيفية في هذا القسم — أضِفها من صفحة الأقسام.
+                                    </div>
+                                </template>
+                                <template x-for="j in jobTitles" :key="j.id">
+                                    <button type="button" @click="form.job_title_id=j.id; open=false"
+                                            class="rs-opt" :class="String(form.job_title_id)===String(j.id) ? 'selected':''"
+                                            x-text="j.name"></button>
+                                </template>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Contract Type (from API list) --}}
                     <div>
                         <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">نوع العقد</label>
                         <div x-data="{ open: false }" @click.outside="open = false" class="relative">
                             <button type="button" @click="open = !open" class="rs-trigger" :data-open="open">
-                                <span x-text="({permanent:'دائم', temporary:'مؤقت', contract:'عقد'})[form.contract_type] || 'اختر'"></span>
+                                <span x-text="contractTypes.find(t => String(t.id)===String(form.contract_type_id))?.name || 'اختر نوع العقد'"></span>
                                 <span class="material-symbols-outlined rs-trigger-icon">expand_more</span>
                             </button>
                             <div x-show="open" class="rs-panel" x-transition style="display:none">
-                                <button type="button" @click="form.contract_type='permanent'; open=false"
-                                        class="rs-opt" :class="form.contract_type==='permanent' ? 'selected':''">دائم</button>
-                                <button type="button" @click="form.contract_type='temporary'; open=false"
-                                        class="rs-opt" :class="form.contract_type==='temporary' ? 'selected':''">مؤقت</button>
-                                <button type="button" @click="form.contract_type='contract'; open=false"
-                                        class="rs-opt" :class="form.contract_type==='contract' ? 'selected':''">عقد</button>
+                                <template x-if="contractTypes.length === 0">
+                                    <div class="rs-opt text-on-surface-variant">
+                                        لا توجد أنواع عقود — أضِفها من صفحة إعدادات الشركة.
+                                    </div>
+                                </template>
+                                <template x-for="t in contractTypes" :key="t.id">
+                                    <button type="button" @click="form.contract_type_id=t.id; open=false"
+                                            class="rs-opt" :class="String(form.contract_type_id)===String(t.id) ? 'selected':''"
+                                            x-text="t.name"></button>
+                                </template>
                             </div>
                         </div>
                     </div>
@@ -290,7 +321,7 @@
                             <template x-for="e in availableManagers()" :key="e.id">
                                 <button type="button" @click="form.manager_id=e.id; open=false"
                                         class="rs-opt" :class="String(form.manager_id)===String(e.id) ? 'selected':''">
-                                    <span x-text="e.name + (e.job_title ? ' · ' + e.job_title : '')"></span>
+                                    <span x-text="e.name + (e.job_title?.name ? ' · ' + e.job_title.name : '')"></span>
                                 </button>
                             </template>
                         </div>
@@ -318,14 +349,15 @@
 <script>
 function employeesPage() {
     const emptyForm = {
-        name:'', email:'', job_title:'', phone:'',
-        department_id:'', manager_id:'', contract_type:'permanent',
+        name:'', email:'', phone:'',
+        department_id:'', job_title_id:'', manager_id:'', contract_type_id:'',
         hire_date:'', status:'active',
         base_salary:0, housing_allowance:0, transport_allowance:0,
         level: 'employee',
     };
     return {
         employees:[], meta:{}, departments:[], allEmployees:[], loading:false, loadingManagers:false,
+        contractTypes:[], jobTitles:[], loadingJobTitles:false,
         search:'', filterDept:'', filterStatus:'',
         showModal:false, editingId:null, form:{...emptyForm},
         formError:'', saving:false,
@@ -372,7 +404,30 @@ function employeesPage() {
         },
 
         async init() {
-            await Promise.all([this.fetchEmployees(), this.fetchDepartments()]);
+            await Promise.all([this.fetchEmployees(), this.fetchDepartments(), this.fetchContractTypes()]);
+        },
+
+        async onDepartmentChange(deptId) {
+            this.form.department_id = deptId;
+            this.form.job_title_id = ''; // clear stale selection — old dept's job title won't match
+            this.jobTitles = [];
+            if (deptId) await this.fetchJobTitles(deptId);
+        },
+
+        async fetchContractTypes() {
+            try {
+                const r = await axios.get('/api/v1/contract-types');
+                if (r.data.success) this.contractTypes = r.data.data || [];
+            } catch(e){}
+        },
+
+        async fetchJobTitles(deptId) {
+            this.loadingJobTitles = true;
+            try {
+                const r = await axios.get('/api/v1/job-titles?department_id=' + deptId);
+                if (r.data.success) this.jobTitles = r.data.data || [];
+            } catch(e){ this.jobTitles = []; }
+            finally { this.loadingJobTitles = false; }
         },
 
         async fetchEmployees(page=1) {
@@ -409,18 +464,23 @@ function employeesPage() {
         openCreate() {
             this.editingId = null;
             this.form = {...emptyForm};
+            this.jobTitles = [];
             this.formError = '';
             this.showModal = true;
             this.fetchAllEmployees();
         },
 
-        openEdit(emp) {
+        async openEdit(emp) {
             this.editingId = emp.id;
             const managerId = emp.manager?.id || '';
+            const deptId    = emp.department?.id || '';
             this.form = {
-                name: emp.name, email: emp.email, job_title: emp.job_title||'',
-                phone: emp.phone||'', department_id: emp.department?.id||'',
-                manager_id: managerId, contract_type: emp.contract_type||'permanent',
+                name: emp.name, email: emp.email,
+                phone: emp.phone||'',
+                department_id: deptId,
+                job_title_id: emp.job_title?.id || '',
+                manager_id: managerId,
+                contract_type_id: emp.contract_type?.id || '',
                 hire_date: emp.hire_date||'', status: emp.status||'active',
                 base_salary: emp.base_salary||0,
                 housing_allowance: emp.housing_allowance||0,
@@ -430,6 +490,8 @@ function employeesPage() {
             this.formError = '';
             this.showModal = true;
             this.fetchAllEmployees();
+            // Load this dept's job titles so the current selection has a label
+            if (deptId) await this.fetchJobTitles(deptId);
         },
 
         async saveEmployee() {

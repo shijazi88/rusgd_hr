@@ -24,7 +24,7 @@ class UserResource extends JsonResource
             'employee'    => $this->whenLoaded('employee', fn () => [
                 'id'         => $this->employee->id,
                 'name'       => $this->employee->name,
-                'job_title'  => $this->employee->job_title,
+                'job_title'  => $this->employee->relationLoaded('jobTitle') ? $this->employee->jobTitle?->name : null,
                 'department' => $this->employee->relationLoaded('department')
                     ? ['id' => $this->employee->department->id, 'name' => $this->employee->department->name]
                     : null,

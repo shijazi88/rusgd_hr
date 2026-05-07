@@ -229,7 +229,33 @@
                 </div>
             </a>
 
-            <a x-show="can('manage_rules')" href="/approval-rules" class="nav-card compact col-span-1" style="--accent:#eab308;--glow:rgba(234,179,8,.15);--d:490ms">
+            <a x-show="can('manage_company_settings')" href="/company" class="nav-card compact col-span-1" style="--accent:#0ea5a4;--glow:rgba(14,165,164,.15);--d:485ms">
+                <div class="util-body">
+                    <div class="card-icon xs" style="background:rgba(14,165,164,.1);border-color:rgba(14,165,164,.3)">
+                        <span class="material-symbols-outlined text-[16px]" style="color:#0ea5a4;font-variation-settings:'FILL' 1">business</span>
+                    </div>
+                    <div class="flex-1">
+                        <p class="util-title">إعدادات الشركة</p>
+                        <p class="util-sub">الاسم وأنواع العقود</p>
+                    </div>
+                    <span class="material-symbols-outlined text-[15px] text-slate-700 group-hover:text-slate-400 transition-colors">arrow_back_ios</span>
+                </div>
+            </a>
+
+            <a x-show="can('manage_departments')" href="/departments" class="nav-card compact col-span-1" style="--accent:#14b8a6;--glow:rgba(20,184,166,.15);--d:490ms">
+                <div class="util-body">
+                    <div class="card-icon xs" style="background:rgba(20,184,166,.1);border-color:rgba(20,184,166,.3)">
+                        <span class="material-symbols-outlined text-[16px]" style="color:#14b8a6;font-variation-settings:'FILL' 1">apartment</span>
+                    </div>
+                    <div class="flex-1">
+                        <p class="util-title">الأقسام</p>
+                        <p class="util-sub">هيكلة الأقسام</p>
+                    </div>
+                    <span class="material-symbols-outlined text-[15px] text-slate-700 group-hover:text-slate-400 transition-colors">arrow_back_ios</span>
+                </div>
+            </a>
+
+            <a x-show="can('manage_rules')" href="/approval-rules" class="nav-card compact col-span-1" style="--accent:#eab308;--glow:rgba(234,179,8,.15);--d:540ms">
                 <div class="util-body">
                     <div class="card-icon xs" style="background:rgba(234,179,8,.1);border-color:rgba(234,179,8,.3)">
                         <span class="material-symbols-outlined text-[16px]" style="color:#eab308;font-variation-settings:'FILL' 1">gavel</span>

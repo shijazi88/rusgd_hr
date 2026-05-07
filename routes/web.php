@@ -16,4 +16,6 @@ Route::get('/purchase-requests', fn () => view('purchase-requests.index'))->name
 Route::get('/payroll',           fn () => view('payroll.index'))->name('payroll');
 Route::get('/roles',             fn () => view('roles.index'))->name('roles');
 Route::get('/approval-rules',    fn () => view('approval-rules.index'))->name('approval-rules');
+Route::get('/departments',       fn () => view('departments.index'))->name('departments');
+Route::get('/company',           fn () => view('company.index'))->name('company');
 Route::get('/approvals',         fn () => view('approvals.index'))->name('approvals');
