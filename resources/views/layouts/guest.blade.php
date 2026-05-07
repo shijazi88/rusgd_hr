@@ -80,7 +80,27 @@
     }
     </script>
     <style>
-        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        /* Full class definition — don't rely on Google Fonts CSS to inject it.
+           The variable-axis URL only reliably ships @font-face; without an
+           explicit font-family + ligature feature here, icons render as raw
+           text whenever the convenience class is missing from the response. */
+        .material-symbols-outlined {
+            font-family: 'Material Symbols Outlined';
+            font-weight: normal;
+            font-style: normal;
+            line-height: 1;
+            letter-spacing: normal;
+            text-transform: none;
+            display: inline-block;
+            white-space: nowrap;
+            word-wrap: normal;
+            direction: ltr;
+            font-feature-settings: 'liga';
+            -webkit-font-feature-settings: 'liga';
+            -webkit-font-smoothing: antialiased;
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
         .bg-dot-pattern { background-image: radial-gradient(rgba(14,165,164,0.05) 1px, transparent 1px); background-size: 20px 20px; }
         @keyframes spin { to { transform: rotate(360deg); } }
         .animate-spin { animation: spin 1s linear infinite; }
