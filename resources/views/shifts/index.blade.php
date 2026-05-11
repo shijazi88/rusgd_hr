@@ -2,27 +2,26 @@
 @section('title', 'ورديات الدوام')
 
 @section('content')
-<div x-data="shiftsPage()" x-init="init()" class="bg-[#071426] min-h-screen">
+<div x-data="shiftsPage()" x-init="init()" class="bg-surface min-h-screen transition-colors duration-300">
     <main class="max-w-[1440px] mx-auto px-8 pt-8 pb-20">
 
-        <!-- Header -->
+        {{-- Header --}}
         <div class="flex justify-between items-end mb-8">
             <div>
-                <h1 class="font-h1 text-[20px] font-bold text-[#F1F5F9]">ورديات الدوام</h1>
-                <p class="font-body-secondary text-[12px] text-[#475569] mt-1">إدارة جداول العمل وتوزيع الورديات</p>
+                <h1 class="font-h1 text-[20px] font-bold text-on-surface">ورديات الدوام</h1>
+                <p class="font-body-secondary text-[12px] text-on-surface-variant mt-1">إدارة جداول العمل وتوزيع الورديات</p>
             </div>
-            <div class="flex gap-3">
-                <button @click="openAssign()" class="px-5 py-2 bg-primary-container text-white rounded-lg font-bold text-sm hover:brightness-110 transition-all flex items-center gap-2">
-                    تعيين وردية <span class="material-symbols-outlined text-[16px]" style="font-variation-settings:'FILL' 1;">add</span>
-                </button>
-            </div>
+            <button @click="openAssign()"
+                    class="px-5 py-2.5 bg-primary-container text-white rounded-lg font-bold text-sm hover:brightness-110 transition-all flex items-center gap-2">
+                تعيين وردية <span class="text-xl leading-none">+</span>
+            </button>
         </div>
 
-        <!-- Shift Definition Cards -->
+        {{-- Shift Definition Cards --}}
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
             <template x-for="shift in shifts" :key="shift.id">
-                <div class="bg-[#071426] border border-[#0B1F3A] p-6 rounded-lg hover:border-primary-container/30 transition-all group"
-                     :style="'border-top: 3px solid ' + (shift.color || '#0EA5A4')">
+                <div class="bg-surface-container border border-outline-variant p-6 rounded-[14px] hover:border-primary-container/30 transition-all"
+                     :style="'border-top: 3px solid ' + (shift.color || '#0EA5A4') + '; box-shadow: var(--c-shadow)'">
                     <div class="flex justify-between items-start mb-4">
                         <span class="material-symbols-outlined p-2 rounded-lg text-[22px]"
                               :style="'color:' + (shift.color||'#0EA5A4') + '; background:' + (shift.color||'#0EA5A4') + '1a'"
@@ -31,50 +30,57 @@
                               :style="'color:' + (shift.color||'#0EA5A4') + '; background:' + (shift.color||'#0EA5A4') + '1a'"
                               x-text="'فترة سماح: ' + (shift.grace_minutes||10) + ' دقيقة'"></span>
                     </div>
-                    <h3 class="font-h2 text-lg text-white mb-2" x-text="shift.name"></h3>
-                    <p class="font-body-secondary text-sm text-slate-400 tracking-wide" x-text="shift.start_time + ' — ' + shift.end_time"></p>
+                    <h3 class="font-h2 text-lg text-on-surface mb-2" x-text="shift.name"></h3>
+                    {{-- dir="ltr" prevents the start/end time order from getting flipped by the surrounding RTL context --}}
+                    <p class="font-body-secondary text-sm text-on-surface-variant tracking-wide" dir="ltr"
+                       x-text="(shift.start_time||'') + ' — ' + (shift.end_time||'')"></p>
                 </div>
             </template>
         </div>
 
-        <!-- Weekly Schedule Grid -->
+        {{-- Weekly Schedule Grid --}}
         <section class="mb-12">
-            <div class="bg-[#071426] border border-[#0B1F3A] rounded-xl overflow-hidden shadow-2xl">
-                <div class="p-5 border-b border-slate-800 flex justify-between items-center">
-                    <h2 class="font-h2 text-lg text-white">جدول الورديات الأسبوعي</h2>
+            <div class="bg-surface-container border border-outline-variant rounded-xl overflow-hidden"
+                 style="box-shadow: var(--c-shadow)">
+                <div class="p-5 border-b border-outline-variant flex justify-between items-center">
+                    <h2 class="font-h2 text-lg text-on-surface">جدول الورديات الأسبوعي</h2>
                     <span class="text-sm text-on-surface-variant font-body-secondary" x-text="weekLabel"></span>
                 </div>
                 <div class="overflow-x-auto">
                     <table class="w-full border-collapse text-right">
                         <thead>
-                            <tr class="bg-surface-container-low text-slate-400 text-xs font-bold">
-                                <th class="p-4 border-b border-slate-800 min-w-[200px]">الموظف</th>
-                                <th class="p-4 border-b border-slate-800">السبت</th>
-                                <th class="p-4 border-b border-slate-800">الأحد</th>
-                                <th class="p-4 border-b border-slate-800">الاثنين</th>
-                                <th class="p-4 border-b border-slate-800">الثلاثاء</th>
-                                <th class="p-4 border-b border-slate-800">الأربعاء</th>
-                                <th class="p-4 border-b border-slate-800">الخميس</th>
-                                <th class="p-4 border-b border-slate-800">الجمعة</th>
+                            <tr>
+                                <th class="p-4 min-w-[200px]">الموظف</th>
+                                <th class="p-4">السبت</th>
+                                <th class="p-4">الأحد</th>
+                                <th class="p-4">الاثنين</th>
+                                <th class="p-4">الثلاثاء</th>
+                                <th class="p-4">الأربعاء</th>
+                                <th class="p-4">الخميس</th>
+                                <th class="p-4">الجمعة</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-slate-800">
+                        <tbody class="divide-y divide-outline-variant">
                             <template x-for="row in weeklyRows" :key="row.employee_id">
-                                <tr class="hover:bg-white/[0.01] transition-colors">
-                                    <td class="p-4 flex items-center gap-3">
-                                        <div class="w-8 h-8 rounded-lg bg-slate-800 flex items-center justify-center text-xs font-bold text-primary-container"
-                                             x-text="initials(row.employee_name)"></div>
-                                        <span class="text-sm font-medium text-slate-200" x-text="row.employee_name"></span>
+                                <tr class="hover:bg-surface-container-high transition-colors">
+                                    <td class="p-4">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold text-primary-container border border-outline-variant"
+                                                 style="background:rgba(14,165,164,0.1)"
+                                                 x-text="initials(row.employee_name)"></div>
+                                            <span class="text-sm font-medium text-on-surface" x-text="row.employee_name"></span>
+                                        </div>
                                     </td>
                                     <template x-for="day in ['السبت','الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة']" :key="day">
-                                        <td class="p-4 text-center" :class="(day==='السبت'||day==='الجمعة') ? 'bg-white/[0.02]' : ''">
+                                        <td class="p-4 text-center"
+                                            :class="(day==='السبت'||day==='الجمعة') ? 'bg-surface-container-low/50' : ''">
                                             <template x-if="row.schedule[day]">
                                                 <span class="inline-block px-3 py-1 rounded text-[10px] font-bold"
                                                       :style="shiftChipStyle(row.schedule[day])"
                                                       x-text="row.schedule[day]"></span>
                                             </template>
                                             <template x-if="!row.schedule[day]">
-                                                <span class="text-slate-600">--</span>
+                                                <span class="text-on-surface-variant">--</span>
                                             </template>
                                         </td>
                                     </template>
@@ -89,16 +95,17 @@
             </div>
         </section>
 
-        <!-- Assignments Table -->
+        {{-- Assignments Table --}}
         <section>
-            <div class="bg-[#071426] border border-[#0B1F3A] rounded-xl overflow-hidden">
-                <div class="p-5 border-b border-slate-800">
-                    <h2 class="font-h2 text-lg text-white">تعيينات الموظفين الحالية</h2>
+            <div class="bg-surface-container border border-outline-variant rounded-xl overflow-hidden"
+                 style="box-shadow: var(--c-shadow)">
+                <div class="p-5 border-b border-outline-variant">
+                    <h2 class="font-h2 text-lg text-on-surface">تعيينات الموظفين الحالية</h2>
                 </div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-right">
                         <thead>
-                            <tr class="text-slate-400 text-xs font-bold border-b border-slate-800">
+                            <tr>
                                 <th class="p-5">الموظف</th>
                                 <th class="p-5">الوردية</th>
                                 <th class="p-5">تاريخ البدء</th>
@@ -107,17 +114,17 @@
                                 <th class="p-5">إجراءات</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-slate-800">
+                        <tbody class="divide-y divide-outline-variant">
                             <template x-for="a in assignments" :key="a.id">
-                                <tr class="hover:bg-white/[0.01]">
+                                <tr class="hover:bg-surface-container-high transition-colors">
                                     <td class="p-5">
                                         <div class="flex items-center gap-3">
-                                            <div class="w-9 h-9 bg-slate-800 rounded-lg flex items-center justify-center font-bold text-sm"
-                                                 :style="'color:' + (a.shift?.color||'#0EA5A4')"
+                                            <div class="w-9 h-9 rounded-lg flex items-center justify-center font-bold text-sm border border-outline-variant"
+                                                 :style="'color:' + (a.shift?.color||'#0EA5A4') + '; background: rgba(14,165,164,0.08)'"
                                                  x-text="initials(a.employee?.name)"></div>
                                             <div>
-                                                <div class="text-sm font-bold text-slate-200" x-text="a.employee?.name||'—'"></div>
-                                                <div class="text-xs text-slate-500" x-text="a.employee?.department?.name||a.employee?.department||''"></div>
+                                                <div class="text-sm font-bold text-on-surface" x-text="a.employee?.name||'—'"></div>
+                                                <div class="text-xs text-on-surface-variant" x-text="a.employee?.department?.name||a.employee?.department||''"></div>
                                             </div>
                                         </div>
                                     </td>
@@ -128,15 +135,14 @@
                                             <span x-text="a.shift?.name||'—'"></span>
                                         </span>
                                     </td>
-                                    <td class="p-5 text-sm text-slate-400 font-body-secondary" x-text="a.start_date||'—'"></td>
-                                    <td class="p-5 text-sm text-slate-400 font-body-secondary" x-text="a.end_date||'—'"></td>
-                                    <td class="p-5 text-xs text-slate-300" x-text="a.days_of_week||'—'"></td>
+                                    <td class="p-5 text-sm text-on-surface-variant font-body-secondary" dir="ltr" x-text="a.start_date||'—'"></td>
+                                    <td class="p-5 text-sm text-on-surface-variant font-body-secondary" dir="ltr" x-text="a.end_date||'—'"></td>
+                                    <td class="p-5 text-xs text-on-surface" x-text="a.days_of_week||'—'"></td>
                                     <td class="p-5">
-                                        <div class="flex gap-3">
-                                            <button @click="deleteAssignment(a)" class="text-slate-500 hover:text-error transition-colors">
-                                                <span class="material-symbols-outlined text-xl">delete</span>
-                                            </button>
-                                        </div>
+                                        <button @click="deleteAssignment(a)"
+                                                class="text-on-surface-variant hover:text-error hover:bg-error/10 p-1.5 rounded transition-colors">
+                                            <span class="material-symbols-outlined text-[18px]">delete</span>
+                                        </button>
                                     </td>
                                 </tr>
                             </template>
@@ -151,45 +157,85 @@
 
     </main>
 
-    <!-- Assign Shift Modal -->
-    <div x-show="showAssign" style="display:none;" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
-        <div class="bg-[#0B1F3A] w-full max-w-lg rounded-[20px] p-7 border border-white/10 shadow-2xl">
-            <div class="flex justify-between items-center mb-6">
-                <h3 class="text-lg font-bold text-white">تعيين وردية</h3>
-                <button @click="showAssign=false" class="text-slate-500 hover:text-white"><span class="material-symbols-outlined">close</span></button>
+    {{-- Assign Shift Modal --}}
+    <div x-show="showAssign" style="display:none;"
+         class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
+        <div class="bg-surface-container w-full max-w-lg rounded-[20px] border border-outline-variant shadow-2xl flex flex-col">
+
+            {{-- Modal header --}}
+            <div class="px-6 py-5 border-b border-outline-variant flex justify-between items-center border-r-4 border-r-primary-container bg-surface-container-low rounded-t-[20px]">
+                <h3 class="font-h2 text-on-surface">تعيين وردية</h3>
+                <button @click="showAssign=false" class="text-on-surface-variant hover:text-on-surface transition-colors">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
             </div>
-            <div class="space-y-4">
+
+            <div class="p-6 flex flex-col gap-5">
+
+                {{-- Employee dropdown --}}
                 <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">الموظف</label>
-                    <select x-model="af.employee_id" class="w-full bg-[#071426] border border-[#0B1F3A] text-slate-200 rounded-lg py-2.5 px-4 focus:ring-1 focus:ring-primary-container outline-none text-sm appearance-none">
-                        <option value="">اختر موظف</option>
-                        <template x-for="e in allEmployees" :key="e.id"><option :value="e.id" x-text="e.name"></option></template>
-                    </select>
+                    <label class="block text-sm font-body-secondary text-on-surface-variant mb-1.5">الموظف</label>
+                    <div x-data="{ open: false }" @click.outside="open = false" class="relative">
+                        <button type="button" @click="open = !open" class="rs-trigger" :data-open="open">
+                            <span x-text="allEmployees.find(e => String(e.id)===String(af.employee_id))?.name || 'اختر موظف'"></span>
+                            <span class="material-symbols-outlined rs-trigger-icon">expand_more</span>
+                        </button>
+                        <div x-show="open" class="rs-panel" x-transition style="display:none">
+                            <button type="button" @click="af.employee_id=''; open=false"
+                                    class="rs-opt" :class="af.employee_id==='' ? 'selected' : ''">اختر موظف</button>
+                            <template x-for="e in allEmployees" :key="e.id">
+                                <button type="button" @click="af.employee_id=e.id; open=false"
+                                        class="rs-opt" :class="String(af.employee_id)===String(e.id) ? 'selected' : ''"
+                                        x-text="e.name"></button>
+                            </template>
+                        </div>
+                    </div>
                 </div>
+
+                {{-- Shift dropdown --}}
                 <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">الوردية</label>
-                    <select x-model="af.shift_id" class="w-full bg-[#071426] border border-[#0B1F3A] text-slate-200 rounded-lg py-2.5 px-4 focus:ring-1 focus:ring-primary-container outline-none text-sm appearance-none">
-                        <option value="">اختر الوردية</option>
-                        <template x-for="s in shifts" :key="s.id"><option :value="s.id" x-text="s.name"></option></template>
-                    </select>
+                    <label class="block text-sm font-body-secondary text-on-surface-variant mb-1.5">الوردية</label>
+                    <div x-data="{ open: false }" @click.outside="open = false" class="relative">
+                        <button type="button" @click="open = !open" class="rs-trigger" :data-open="open">
+                            <span x-text="shifts.find(s => String(s.id)===String(af.shift_id))?.name || 'اختر الوردية'"></span>
+                            <span class="material-symbols-outlined rs-trigger-icon">expand_more</span>
+                        </button>
+                        <div x-show="open" class="rs-panel" x-transition style="display:none">
+                            <button type="button" @click="af.shift_id=''; open=false"
+                                    class="rs-opt" :class="af.shift_id==='' ? 'selected' : ''">اختر الوردية</button>
+                            <template x-for="s in shifts" :key="s.id">
+                                <button type="button" @click="af.shift_id=s.id; open=false"
+                                        class="rs-opt" :class="String(af.shift_id)===String(s.id) ? 'selected' : ''"
+                                        x-text="s.name"></button>
+                            </template>
+                        </div>
+                    </div>
                 </div>
+
+                {{-- Date range --}}
                 <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">تاريخ البدء</label>
-                        <input x-model="af.start_date" type="date" dir="ltr" class="w-full bg-[#071426] border border-[#0B1F3A] text-slate-200 rounded-lg py-2.5 px-4 focus:ring-1 focus:ring-primary-container outline-none text-sm">
+                        <label class="block text-sm font-body-secondary text-on-surface-variant mb-1.5">تاريخ البدء</label>
+                        <input x-model="af.start_date" type="date" dir="ltr"
+                               class="w-full bg-surface border border-outline-variant text-on-surface rounded-lg py-2.5 px-4 focus:outline-none focus:border-primary-container focus:ring-1 focus:ring-primary-container transition-all text-sm">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">تاريخ الانتهاء</label>
-                        <input x-model="af.end_date" type="date" dir="ltr" class="w-full bg-[#071426] border border-[#0B1F3A] text-slate-200 rounded-lg py-2.5 px-4 focus:ring-1 focus:ring-primary-container outline-none text-sm">
+                        <label class="block text-sm font-body-secondary text-on-surface-variant mb-1.5">تاريخ الانتهاء</label>
+                        <input x-model="af.end_date" type="date" dir="ltr"
+                               class="w-full bg-surface border border-outline-variant text-on-surface rounded-lg py-2.5 px-4 focus:outline-none focus:border-primary-container focus:ring-1 focus:ring-primary-container transition-all text-sm">
                     </div>
                 </div>
+
                 <div x-show="aErr" class="text-error text-sm" x-text="aErr"></div>
-                <div class="flex gap-3 pt-2">
-                    <button @click="saveAssign()" :disabled="assigning" class="flex-1 bg-primary-container text-white py-2.5 rounded-lg font-bold hover:brightness-110 disabled:opacity-60 text-sm">
-                        <span x-text="assigning?'جارٍ الحفظ...':'تعيين'"></span>
-                    </button>
-                    <button @click="showAssign=false" class="rs-btn-cancel flex-1 py-2.5 text-sm">إلغاء</button>
-                </div>
+            </div>
+
+            {{-- Modal footer --}}
+            <div class="px-6 py-4 bg-surface-container-low border-t border-outline-variant flex justify-end gap-3 rounded-b-[20px]">
+                <button @click="showAssign=false" class="rs-btn-cancel px-5 py-2.5 text-sm font-semibold">إلغاء</button>
+                <button @click="saveAssign()" :disabled="assigning"
+                        class="bg-primary-container text-white px-5 py-2.5 rounded-lg font-body-main font-semibold hover:brightness-110 transition-all text-sm disabled:opacity-60">
+                    <span x-text="assigning ? 'جارٍ الحفظ...' : 'تعيين'"></span>
+                </button>
             </div>
         </div>
     </div>
@@ -221,9 +267,9 @@ function shiftsPage() {
         },
 
         shiftChipStyle(name){
-            if(name?.includes('صباح')) return 'color:#0EA5A4;background:rgba(14,165,164,0.1)';
-            if(name?.includes('مساء')||name?.includes('مسائ')) return 'color:#F59E0B;background:rgba(245,158,11,0.1)';
-            return 'color:#60A5FA;background:rgba(96,165,250,0.1)';
+            if(name?.includes('صباح')) return 'color:#0EA5A4;background:rgba(14,165,164,0.12)';
+            if(name?.includes('مساء')||name?.includes('مسائ')) return 'color:#F59E0B;background:rgba(245,158,11,0.12)';
+            return 'color:#60A5FA;background:rgba(96,165,250,0.12)';
         },
 
         async init(){
@@ -259,17 +305,21 @@ function shiftsPage() {
             } catch(e){}
         },
 
-        openAssign(){ this.af={employee_id:'',shift_id:'',start_date:'',end_date:'',days_of_week:'الأحد,الاثنين,الثلاثاء,الأربعاء,الخميس'}; this.aErr=''; this.showAssign=true; },
+        openAssign(){
+            this.af={employee_id:'', shift_id:'', start_date:'', end_date:'', days_of_week:'الأحد,الاثنين,الثلاثاء,الأربعاء,الخميس'};
+            this.aErr=''; this.showAssign=true;
+        },
 
         async saveAssign(){
             this.aErr=''; this.assigning=true;
             try {
                 await axios.post('/api/v1/shift-assignments', this.af);
-                this.showAssign=false; await Promise.all([this.fetchAssignments(), this.fetchWeekly()]);
+                this.showAssign=false;
+                await Promise.all([this.fetchAssignments(), this.fetchWeekly()]);
             } catch(e){
                 const errs=e.response?.data?.errors;
-                this.aErr=errs?Object.values(errs).flat().join(' '):(e.response?.data?.message||'خطأ');
-            } finally{this.assigning=false;}
+                this.aErr=errs ? Object.values(errs).flat().join(' ') : (e.response?.data?.message||'خطأ');
+            } finally{ this.assigning=false; }
         },
 
         async deleteAssignment(a){
