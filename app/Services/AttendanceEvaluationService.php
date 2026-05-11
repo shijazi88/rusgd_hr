@@ -54,8 +54,25 @@ class AttendanceEvaluationService
         }
 
         // No check-in recorded → absent for the day. Apply absence deduction if configured.
+        // EXCEPTION: if the matched period has `allow_no_fingerprint`, the
+        // employee (typically a manager) isn't expected to punch in at all
+        // — mark them present with no deduction.
         if (!$checkInTime) {
             $period = $shiftDay->firstPeriod ?? $shiftDay->secondPeriod;
+
+            if ($period?->allow_no_fingerprint) {
+                return [
+                    'shift_id'         => $shift->id,
+                    'period_id'        => $period->id,
+                    'multiplier'       => (float) $shiftDay->multiplier,
+                    'status'           => 'present',
+                    'late_minutes'     => 0,
+                    'deduction_amount' => 0,
+                    'deduction_type'   => null,
+                    'deduction_reason' => null,
+                ];
+            }
+
             return [
                 'shift_id'         => $shift->id,
                 'period_id'        => $period?->id,
@@ -99,6 +116,22 @@ class AttendanceEvaluationService
     private function evaluateAgainstPeriod(Period $period, Shift $shift, ShiftDay $shiftDay, string $checkInTime): array
     {
         $multiplier = (float) $shiftDay->multiplier;
+
+        // ── No-fingerprint period: typically a manager — no rules at all ────
+        // Period definition is purely formal for FK consistency; no late tier,
+        // no absence rule, no work-hours check applies.
+        if ($period->allow_no_fingerprint) {
+            return [
+                'shift_id'         => $shift->id,
+                'period_id'        => $period->id,
+                'multiplier'       => $multiplier,
+                'status'           => 'present',
+                'late_minutes'     => 0,
+                'deduction_amount' => 0,
+                'deduction_type'   => null,
+                'deduction_reason' => null,
+            ];
+        }
 
         // ── Open period: no fixed windows, no lateness concept ──────────────
         // The only thing that matters is whether the employee ends up working

@@ -91,19 +91,22 @@
                         <input x-model="form.name" type="text" placeholder="مثال: دوام صباحي"
                                class="w-full bg-surface border border-outline-variant rounded-lg px-4 py-2.5 text-on-surface focus:outline-none focus:border-primary-container focus:ring-1 focus:ring-primary-container transition-all text-sm">
                     </div>
-                    <div>
+                    {{-- Total work time is irrelevant when "حضور بدون بصمات" is on
+                         (no tracking at all). For "فترة مفتوحة" it IS still needed
+                         (that's the only requirement in that mode). --}}
+                    <div x-show="!form.allow_no_fingerprint" style="display:none">
                         <label class="block text-sm text-on-surface-variant mb-1.5">إجمالي وقت العمل</label>
                         <div class="grid grid-cols-2 gap-3">
                             <div class="relative">
                                 <input :value="workHoursPart" @input="setWorkHours($event.target.value)"
-                                       type="number" min="0" max="24" dir="ltr"
-                                       class="w-full bg-surface border border-outline-variant rounded-lg px-4 py-2.5 pr-14 text-on-surface focus:outline-none focus:border-primary-container focus:ring-1 focus:ring-primary-container transition-all text-sm">
+                                       type="number" min="0" max="24"
+                                       class="rs-num-input w-full bg-surface border border-outline-variant rounded-lg py-2.5 pr-4 pl-14 text-on-surface focus:outline-none focus:border-primary-container focus:ring-1 focus:ring-primary-container transition-all text-sm">
                                 <span class="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-on-surface-variant pointer-events-none">ساعة</span>
                             </div>
                             <div class="relative">
                                 <input :value="workMinutesPart" @input="setWorkMinutes($event.target.value)"
-                                       type="number" min="0" max="59" dir="ltr"
-                                       class="w-full bg-surface border border-outline-variant rounded-lg px-4 py-2.5 pr-14 text-on-surface focus:outline-none focus:border-primary-container focus:ring-1 focus:ring-primary-container transition-all text-sm">
+                                       type="number" min="0" max="59"
+                                       class="rs-num-input w-full bg-surface border border-outline-variant rounded-lg py-2.5 pr-4 pl-14 text-on-surface focus:outline-none focus:border-primary-container focus:ring-1 focus:ring-primary-container transition-all text-sm">
                                 <span class="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-on-surface-variant pointer-events-none">دقيقة</span>
                             </div>
                         </div>
@@ -126,10 +129,26 @@
                     </label>
                 </div>
 
-                {{-- Open-period explainer: shown only when "فترة مفتوحة" is checked.
-                     In that mode there are no fixed check-in/out windows — the
-                     employee just needs to complete `total_work_minutes`. --}}
-                <div x-show="form.is_open_period" style="display:none"
+                {{-- No-fingerprint explainer: typically for managers who aren't on
+                     fingerprint attendance at all. Takes precedence over open-period
+                     because it's even more permissive — no rules whatsoever. --}}
+                <div x-show="form.allow_no_fingerprint" style="display:none"
+                     class="bg-violet-500/10 border border-violet-500/30 rounded-lg p-4 flex items-start gap-3">
+                    <span class="material-symbols-outlined text-violet-500 text-[20px] mt-0.5"
+                          style="font-variation-settings:'FILL' 1">workspace_premium</span>
+                    <div class="text-sm text-on-surface leading-relaxed">
+                        <p class="font-bold mb-1">حضور بدون بصمات</p>
+                        <p class="text-on-surface-variant text-xs">
+                            هذا الخيار <span class="text-on-surface font-bold">لا علاقة له بالفترات</span> —
+                            يُستخدم عادةً للمديرين الذين لا يسجّلون حضورهم ببصمة.
+                            لن تُطبَّق أي قواعد للدخول/الخروج أو خصومات تأخير على الموظفين المرتبطين بهذه الفترة.
+                        </p>
+                    </div>
+                </div>
+
+                {{-- Open-period explainer: shown only when "فترة مفتوحة" is checked
+                     AND we're NOT in no-fingerprint mode (no-fingerprint is broader). --}}
+                <div x-show="form.is_open_period && !form.allow_no_fingerprint" style="display:none"
                      class="bg-blue-500/10 border border-blue-500/30 rounded-lg p-4 flex items-start gap-3">
                     <span class="material-symbols-outlined text-blue-500 text-[20px] mt-0.5">schedule</span>
                     <div class="text-sm text-on-surface leading-relaxed">
@@ -143,7 +162,7 @@
                 </div>
 
                 {{-- Check-in --}}
-                <fieldset x-show="!form.is_open_period" style="display:none"
+                <fieldset x-show="!form.is_open_period && !form.allow_no_fingerprint" style="display:none"
                           class="border border-outline-variant rounded-[10px] p-4">
                     <legend class="px-2 text-sm font-bold text-on-surface flex items-center gap-2">
                         <input x-model="form.checkin_required" type="checkbox" class="w-4 h-4 accent-primary-container">
@@ -188,7 +207,7 @@
                 </fieldset>
 
                 {{-- Check-out --}}
-                <fieldset x-show="!form.is_open_period" style="display:none"
+                <fieldset x-show="!form.is_open_period && !form.allow_no_fingerprint" style="display:none"
                           class="border border-outline-variant rounded-[10px] p-4">
                     <legend class="px-2 text-sm font-bold text-on-surface flex items-center gap-2">
                         <input x-model="form.checkout_required" type="checkbox" class="w-4 h-4 accent-primary-container">
@@ -221,7 +240,7 @@
                 </fieldset>
 
                 {{-- Late Tiers — irrelevant for open periods --}}
-                <div x-show="!form.is_open_period" style="display:none">
+                <div x-show="!form.is_open_period && !form.allow_no_fingerprint" style="display:none">
                     <div class="flex justify-between items-center mb-3">
                         <h4 class="text-sm font-bold text-on-surface flex items-center gap-2">
                             <span class="material-symbols-outlined text-amber-500 text-[18px]">timer</span>

@@ -789,6 +789,22 @@
             background: rgba(14,165,164,.08);
         }
 
+        /* ── Clean number input (no native spinner arrows) ────────────────
+           Used by quantity fields, hour/minute splits, etc. The native
+           up/down spinner competes visually with custom suffix labels and
+           breaks the editorial design — hide it across browsers. */
+        .rs-num-input::-webkit-outer-spin-button,
+        .rs-num-input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        .rs-num-input[type="number"] {
+            -moz-appearance: textfield;
+            text-align: right;
+            font-family: 'JetBrains Mono', ui-monospace, monospace;
+            font-size: 14px;
+        }
+
         /* ── Page-level surface convenience classes ──────────────── */
         .bg-page    { background-color: var(--c-bg); }
         .bg-card    { background-color: var(--c-card); }
