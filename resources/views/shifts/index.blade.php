@@ -156,7 +156,8 @@
                         <input x-model="form.show_additional_periods" type="checkbox" class="w-4 h-4 accent-primary-container">
                         <span class="text-on-surface">إضافة فترة ثانية لكل يوم (للورديات المقسومة)</span>
                     </label>
-                    <label class="flex items-center gap-2 cursor-pointer">
+                    {{-- Stop only available when editing — can't deactivate a shift that isn't saved yet. --}}
+                    <label x-show="editingId" style="display:none" class="flex items-center gap-2 cursor-pointer">
                         <input x-model="form.is_stopped" type="checkbox" class="w-4 h-4 accent-primary-container">
                         <span class="text-on-surface">إيقاف</span>
                     </label>

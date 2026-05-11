@@ -123,7 +123,9 @@
                         <input x-model="form.allow_no_fingerprint" type="checkbox" class="w-4 h-4 accent-primary-container">
                         <span class="text-on-surface">حضور بدون بصمات</span>
                     </label>
-                    <label class="flex items-center gap-2 cursor-pointer">
+                    {{-- Stop flag only makes sense for existing periods (deactivation).
+                         Hidden in create mode — you can't pause something not saved yet. --}}
+                    <label x-show="editingId" style="display:none" class="flex items-center gap-2 cursor-pointer">
                         <input x-model="form.is_stopped" type="checkbox" class="w-4 h-4 accent-primary-container">
                         <span class="text-on-surface">إيقاف</span>
                     </label>
