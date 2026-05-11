@@ -47,7 +47,6 @@ class ShiftAssignmentController extends Controller
             $shift,
             $request->from_date,
             $request->to_date,
-            $request->days_of_week
         );
 
         return $this->created(

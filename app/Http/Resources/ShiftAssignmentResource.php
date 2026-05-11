@@ -15,7 +15,6 @@ class ShiftAssignmentResource extends JsonResource
             'shift'        => ShiftResource::make($this->whenLoaded('shift')),
             'from_date'    => $this->from_date?->format('Y-m-d'),
             'to_date'      => $this->to_date?->format('Y-m-d'),
-            'days_of_week' => $this->days_of_week,
         ];
     }
 }

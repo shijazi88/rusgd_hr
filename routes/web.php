@@ -12,6 +12,7 @@ Route::get('/org-chart',         fn () => view('org-chart'))->name('org-chart');
 Route::get('/leave-requests',    fn () => view('leave-requests.index'))->name('leave-requests');
 Route::get('/attendance',        fn () => view('attendance.index'))->name('attendance');
 Route::get('/shifts',            fn () => view('shifts.index'))->name('shifts');
+Route::get('/periods',           fn () => view('periods.index'))->name('periods');
 Route::get('/purchase-requests', fn () => view('purchase-requests.index'))->name('purchase-requests');
 Route::get('/payroll',           fn () => view('payroll.index'))->name('payroll');
 Route::get('/roles',             fn () => view('roles.index'))->name('roles');

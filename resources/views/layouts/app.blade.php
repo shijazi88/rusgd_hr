@@ -673,6 +673,49 @@
         }
         .rs-page-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 
+        /* ── Time picker: 3 dropdowns (HH | MM | AM/PM) + "now" button ──
+           Replaces native <input type="time"> with a cleaner editorial-style
+           selector. The dropdowns use the same surface tokens as rs-trigger
+           but stay compact and monospaced for time-glance readability.   */
+        .rs-time-select {
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background: var(--c-card-xs);
+            background-image: none !important;
+            border: 1px solid var(--c-border-h);
+            border-radius: 8px;
+            padding: 6px 10px !important;
+            font-size: 13px;
+            font-family: 'JetBrains Mono', ui-monospace, monospace;
+            color: var(--c-text-1);
+            text-align: center;
+            min-width: 50px;
+            cursor: pointer;
+            transition: border-color .15s, box-shadow .15s, background .15s;
+        }
+        .rs-time-select:hover    { border-color: rgba(14,165,164,.5); background: var(--c-card-l); }
+        .rs-time-select:focus    { outline: none; border-color: #0ea5a4; box-shadow: 0 0 0 3px rgba(14,165,164,.15); }
+        .rs-time-select.rs-time-ap { min-width: 56px; }
+
+        .rs-time-now {
+            background: transparent;
+            border: 1px solid var(--c-border-h);
+            border-radius: 8px;
+            padding: 5px 8px;
+            color: var(--c-text-2);
+            cursor: pointer;
+            transition: color .15s, border-color .15s, background .15s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .rs-time-now:hover {
+            color: #0ea5a4;
+            border-color: #0ea5a4;
+            background: rgba(14,165,164,.08);
+        }
+
         /* ── Page-level surface convenience classes ──────────────── */
         .bg-page    { background-color: var(--c-bg); }
         .bg-card    { background-color: var(--c-card); }
@@ -843,6 +886,64 @@
 // Read permissions/roles from the auth_user blob in localStorage.
 // $can('slug') for one perm; $canAny('a','b') for OR; $hasRole('slug').
 // $guard([...slugs]) redirects to / if user has none of the perms.
+// ── Time picker helper ──────────────────────────────────────────────────
+// Backs the 3-dropdown rs-time picker (HH:MM AM/PM) with a getter/setter
+// pair that reads from / writes to the parent's form state in 24-hour
+// HH:MM:SS format. Use via @include('partials.time-picker', ['get'=>'…','set'=>'…']).
+window.tp = function(getter, setter){
+    return {
+        h: '12', m: '00', ap: 'AM',
+        syncing: false,
+
+        get raw() { return getter(); },
+
+        init() {
+            this.sync();
+            // Re-sync when the parent value changes externally (modal opens, reset, etc.)
+            this.$watch('raw', () => this.sync());
+            // Push changes back when the user picks a different value
+            this.$watch('h',  () => this.commit());
+            this.$watch('m',  () => this.commit());
+            this.$watch('ap', () => this.commit());
+        },
+
+        sync() {
+            this.syncing = true;
+            const v = getter() || '';
+            if (v) {
+                const parts = v.split(':');
+                let hh = parseInt(parts[0] || '0', 10);
+                this.ap = hh >= 12 ? 'PM' : 'AM';
+                hh = hh % 12 || 12;
+                this.h = String(hh).padStart(2, '0');
+                this.m = String(parseInt(parts[1] || '0', 10)).padStart(2, '0');
+            } else {
+                // Visual default — don't push back so empty stays empty
+                this.h = '12'; this.m = '00'; this.ap = 'AM';
+            }
+            this.$nextTick(() => { this.syncing = false; });
+        },
+
+        commit() {
+            if (this.syncing) return;
+            let hh = parseInt(this.h, 10);
+            if (this.ap === 'PM' && hh < 12) hh += 12;
+            if (this.ap === 'AM' && hh === 12) hh = 0;
+            setter(String(hh).padStart(2, '0') + ':' + this.m + ':00');
+        },
+
+        setCurrent() {
+            const d = new Date();
+            let hh = d.getHours();
+            this.ap = hh >= 12 ? 'PM' : 'AM';
+            hh = hh % 12 || 12;
+            this.h = String(hh).padStart(2, '0');
+            this.m = String(d.getMinutes()).padStart(2, '0');
+            // commit() will fire via the $watch on h/m/ap
+        },
+    };
+};
+
 window.$can = function(perm){
     try {
         const u = JSON.parse(localStorage.getItem('auth_user') || '{}');

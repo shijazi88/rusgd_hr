@@ -15,18 +15,25 @@ class Attendance extends Model
     protected $fillable = [
         'employee_id',
         'shift_id',
+        'period_id',
         'date',
         'check_in',
         'check_out',
         'work_hours',
         'late_minutes',
+        'multiplier',
+        'deduction_amount',
+        'deduction_type',
+        'deduction_reason',
         'status',
     ];
 
     protected $casts = [
-        'date'       => 'date',
-        'status'     => AttendanceStatus::class,
-        'work_hours' => 'float',
+        'date'             => 'date',
+        'status'           => AttendanceStatus::class,
+        'work_hours'       => 'float',
+        'multiplier'       => 'decimal:2',
+        'deduction_amount' => 'decimal:2',
     ];
 
     public function employee(): BelongsTo
@@ -37,6 +44,11 @@ class Attendance extends Model
     public function shift(): BelongsTo
     {
         return $this->belongsTo(Shift::class);
+    }
+
+    public function period(): BelongsTo
+    {
+        return $this->belongsTo(Period::class);
     }
 
     public function scopeByStatus(Builder $query, string $status): Builder

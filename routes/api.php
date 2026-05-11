@@ -19,6 +19,7 @@ use App\Http\Controllers\Api\V1\LeaveBalanceController;
 use App\Http\Controllers\Api\V1\LeaveRequestController;
 use App\Http\Controllers\Api\V1\LeaveTypeController;
 use App\Http\Controllers\Api\V1\OrgChartController;
+use App\Http\Controllers\Api\V1\PeriodController;
 use App\Http\Controllers\Api\V1\PermissionController;
 use App\Http\Controllers\Api\V1\PurchaseRequestController;
 use App\Http\Controllers\Api\V1\RejectLeaveController;
@@ -96,6 +97,9 @@ Route::prefix('v1')->group(function () {
 
         Route::post('leave-requests/{id}/approve', ApproveLeaveController::class);
         Route::post('leave-requests/{id}/reject',  RejectLeaveController::class);
+
+        // Periods (atomic time-window definitions used by shifts)
+        Route::apiResource('periods', PeriodController::class);
 
         // Shifts — specific routes before apiResource to avoid {shift} swallowing named segments
         Route::get('shifts/weekly-schedule', [ShiftController::class, 'weeklySchedule']);

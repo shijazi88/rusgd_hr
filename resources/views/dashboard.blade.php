@@ -203,6 +203,19 @@
                 </div>
             </a>
 
+            <a x-show="can('manage_periods')" href="/periods" class="nav-card compact col-span-1" style="--accent:#f59e0b;--glow:rgba(245,158,11,.15);--d:385ms">
+                <div class="util-body">
+                    <div class="card-icon xs" style="background:rgba(245,158,11,.1);border-color:rgba(245,158,11,.3)">
+                        <span class="material-symbols-outlined text-[16px]" style="color:#f59e0b;font-variation-settings:'FILL' 1">timer</span>
+                    </div>
+                    <div class="flex-1">
+                        <p class="util-title">الفترات</p>
+                        <p class="util-sub">قواعد الدخول والتأخير</p>
+                    </div>
+                    <span class="material-symbols-outlined text-[15px] text-slate-700 group-hover:text-slate-400 transition-colors">arrow_back_ios</span>
+                </div>
+            </a>
+
             <a x-show="can('manage_shifts')" href="/shifts" class="nav-card compact col-span-1" style="--accent:#f97316;--glow:rgba(249,115,22,.15);--d:390ms">
                 <div class="util-body">
                     <div class="card-icon xs" style="background:rgba(249,115,22,.1);border-color:rgba(249,115,22,.3)">

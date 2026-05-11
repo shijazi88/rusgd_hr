@@ -99,7 +99,8 @@
                 </div>
                 <div>
                     <label class="block text-sm font-body-secondary text-on-surface-variant mb-1">اسم القاعدة</label>
-                    <input x-model="form.name" type="text" placeholder="مثال: المشتريات الطارئة"
+                    <input x-model="form.name" type="text"
+                           :placeholder="form.type === 'financial' ? 'مثال: المشتريات الطارئة' : 'مثال: إجازة سنوية مطوّلة'"
                            class="w-full bg-[#050F1E] border border-surface-container rounded-lg px-4 py-2.5 text-on-surface focus:outline-none focus:border-primary-container focus:ring-1 focus:ring-primary-container transition-all text-sm">
                 </div>
                 <div>

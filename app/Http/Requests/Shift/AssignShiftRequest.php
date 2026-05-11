@@ -8,18 +8,17 @@ class AssignShiftRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return true;
+        return $this->user()->hasPermissionTo('manage_shifts');
     }
 
     public function rules(): array
     {
         return [
-            'employee_id'    => 'required|integer|exists:employees,id',
-            'shift_id'       => 'required|integer|exists:shifts,id',
-            'from_date'      => 'required|date',
-            'to_date'        => 'required|date|after_or_equal:from_date',
-            'days_of_week'   => 'required|array|min:1',
-            'days_of_week.*' => 'integer|between:0,6',
+            'employee_id' => 'required|integer|exists:employees,id',
+            'shift_id'    => 'required|integer|exists:shifts,id',
+            'from_date'   => 'required|date',
+            'to_date'     => 'required|date|after_or_equal:from_date',
+            // days_of_week removed — now lives in shift_days per shift.
         ];
     }
 }

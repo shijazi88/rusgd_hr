@@ -15,13 +15,11 @@ class ShiftAssignment extends Model
         'shift_id',
         'from_date',
         'to_date',
-        'days_of_week',
     ];
 
     protected $casts = [
-        'days_of_week' => 'array',
-        'from_date'    => 'date',
-        'to_date'      => 'date',
+        'from_date' => 'date',
+        'to_date'   => 'date',
     ];
 
     public function employee(): BelongsTo

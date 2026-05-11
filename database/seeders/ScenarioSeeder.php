@@ -427,16 +427,16 @@ class ScenarioSeeder extends Seeder
 
         if (!$morning) return;
 
-        $workDays = json_encode(['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس']);
-
+        // days_of_week removed — the workdays now live on the shift itself
+        // (see shift_days seeded by ShiftSeeder: Sun-Thu work, Fri/Sat off).
         $assignments = [
-            ['employee_id' => $taha->id,     'shift_id' => $morning, 'from_date' => '2026-01-01', 'to_date' => '2026-12-31', 'days_of_week' => $workDays],
-            ['employee_id' => $mohammed->id, 'shift_id' => $morning, 'from_date' => '2026-01-01', 'to_date' => '2026-12-31', 'days_of_week' => $workDays],
-            ['employee_id' => $sara->id,     'shift_id' => $evening, 'from_date' => '2026-01-01', 'to_date' => '2026-12-31', 'days_of_week' => $workDays],
-            ['employee_id' => $ahmed->id,    'shift_id' => $morning, 'from_date' => '2026-01-01', 'to_date' => '2026-12-31', 'days_of_week' => $workDays],
-            ['employee_id' => $fatima->id,   'shift_id' => $morning, 'from_date' => '2026-01-01', 'to_date' => '2026-12-31', 'days_of_week' => $workDays],
-            ['employee_id' => $omar->id,     'shift_id' => $night,   'from_date' => '2026-01-01', 'to_date' => '2026-12-31', 'days_of_week' => $workDays],
-            ['employee_id' => $noura->id,    'shift_id' => $morning, 'from_date' => '2026-01-01', 'to_date' => '2026-12-31', 'days_of_week' => $workDays],
+            ['employee_id' => $taha->id,     'shift_id' => $morning, 'from_date' => '2026-01-01', 'to_date' => '2026-12-31'],
+            ['employee_id' => $mohammed->id, 'shift_id' => $morning, 'from_date' => '2026-01-01', 'to_date' => '2026-12-31'],
+            ['employee_id' => $sara->id,     'shift_id' => $evening, 'from_date' => '2026-01-01', 'to_date' => '2026-12-31'],
+            ['employee_id' => $ahmed->id,    'shift_id' => $morning, 'from_date' => '2026-01-01', 'to_date' => '2026-12-31'],
+            ['employee_id' => $fatima->id,   'shift_id' => $morning, 'from_date' => '2026-01-01', 'to_date' => '2026-12-31'],
+            ['employee_id' => $omar->id,     'shift_id' => $night,   'from_date' => '2026-01-01', 'to_date' => '2026-12-31'],
+            ['employee_id' => $noura->id,    'shift_id' => $morning, 'from_date' => '2026-01-01', 'to_date' => '2026-12-31'],
         ];
 
         foreach ($assignments as $a) {
