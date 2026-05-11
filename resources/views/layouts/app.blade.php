@@ -673,36 +673,109 @@
         }
         .rs-page-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 
-        /* ── Time picker: 3 dropdowns (HH | MM | AM/PM) + "now" button ──
-           Replaces native <input type="time"> with a cleaner editorial-style
-           selector. The dropdowns use the same surface tokens as rs-trigger
-           but stay compact and monospaced for time-glance readability.   */
-        .rs-time-select {
-            appearance: none;
-            -webkit-appearance: none;
-            -moz-appearance: none;
+        /* ── Time picker: 3 custom Alpine dropdowns (HH | MM | AM/PM) + "now"
+           button. Native <select> dropped because browsers won't let CSS
+           reach the <option> list — these are fully styled custom buttons. */
+        .rs-time-trigger {
+            display: inline-flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 4px;
             background: var(--c-card-xs);
-            background-image: none !important;
             border: 1px solid var(--c-border-h);
             border-radius: 8px;
-            padding: 6px 10px !important;
-            font-size: 13px;
+            padding: 5px 6px 5px 10px;
             font-family: 'JetBrains Mono', ui-monospace, monospace;
+            font-size: 13px;
             color: var(--c-text-1);
-            text-align: center;
-            min-width: 50px;
             cursor: pointer;
             transition: border-color .15s, box-shadow .15s, background .15s;
+            min-width: 56px;
         }
-        .rs-time-select:hover    { border-color: rgba(14,165,164,.5); background: var(--c-card-l); }
-        .rs-time-select:focus    { outline: none; border-color: #0ea5a4; box-shadow: 0 0 0 3px rgba(14,165,164,.15); }
-        .rs-time-select.rs-time-ap { min-width: 56px; }
+        .rs-time-trigger:hover {
+            border-color: rgba(14,165,164,.5);
+            background: var(--c-card-l);
+        }
+        .rs-time-trigger[data-open="true"] {
+            border-color: #0ea5a4;
+            box-shadow: 0 0 0 3px rgba(14,165,164,.15);
+            background: var(--c-card);
+        }
+        .rs-time-trigger .rs-time-value {
+            flex: 1;
+            text-align: center;
+        }
+        .rs-time-chevron {
+            font-size: 16px !important;
+            color: var(--c-text-3);
+            transition: transform .15s;
+            flex-shrink: 0;
+        }
+        .rs-time-trigger[data-open="true"] .rs-time-chevron {
+            transform: rotate(180deg);
+            color: #0ea5a4;
+        }
+        .rs-time-colon {
+            color: var(--c-text-2);
+            font-weight: 700;
+            font-family: 'JetBrains Mono', ui-monospace, monospace;
+            font-size: 14px;
+            user-select: none;
+        }
+
+        .rs-time-dropdown {
+            position: absolute;
+            top: calc(100% + 4px);
+            right: 0;
+            left: 0;
+            z-index: 300;
+            background: var(--c-card);
+            border: 1px solid var(--c-border-h);
+            border-radius: 10px;
+            padding: 4px;
+            max-height: 220px;
+            overflow-y: auto;
+            min-width: 60px;
+        }
+        .dark .rs-time-dropdown {
+            box-shadow: 0 16px 48px rgba(0,0,0,.55), 0 4px 12px rgba(0,0,0,.3);
+        }
+        html:not(.dark) .rs-time-dropdown {
+            box-shadow: 0 8px 32px rgba(15,23,42,.14), 0 2px 8px rgba(15,23,42,.08);
+        }
+        .rs-time-dropdown::-webkit-scrollbar { width: 4px; }
+        .rs-time-dropdown::-webkit-scrollbar-thumb {
+            background: var(--c-border-h);
+            border-radius: 4px;
+        }
+        .rs-time-dropdown::-webkit-scrollbar-thumb:hover { background: #0ea5a4; }
+
+        .rs-time-option {
+            display: block;
+            width: 100%;
+            padding: 6px 8px;
+            text-align: center;
+            background: transparent;
+            border: none;
+            border-radius: 6px;
+            font-family: 'JetBrains Mono', ui-monospace, monospace;
+            font-size: 13px;
+            color: var(--c-text-1);
+            cursor: pointer;
+            transition: background .1s, color .1s;
+        }
+        .rs-time-option:hover { background: var(--c-card-m); }
+        .rs-time-option.selected {
+            background: rgba(14,165,164,.12);
+            color: #0ea5a4;
+            font-weight: 700;
+        }
 
         .rs-time-now {
             background: transparent;
             border: 1px solid var(--c-border-h);
             border-radius: 8px;
-            padding: 5px 8px;
+            padding: 5px 7px;
             color: var(--c-text-2);
             cursor: pointer;
             transition: color .15s, border-color .15s, background .15s;
@@ -889,22 +962,46 @@
 // ── Time picker helper ──────────────────────────────────────────────────
 // Backs the 3-dropdown rs-time picker (HH:MM AM/PM) with a getter/setter
 // pair that reads from / writes to the parent's form state in 24-hour
-// HH:MM:SS format. Use via @include('partials.time-picker', ['get'=>'…','set'=>'…']).
+// HH:MM:SS format.
+//
+// Important: all state (incl. dropdown open flags) lives on this single
+// component. We do NOT nest x-data — Alpine v3's nested scope inheritance
+// is unreliable for closures, so `x-text="h"` from inside a nested
+// `x-data="{open:false}"` would render empty. Single flat scope = no
+// shadowing, no surprises.
+//
+// Exposes hours[], minutes[] arrays so the template can iterate via x-for
+// without relying on the `i in N` range syntax (some Alpine versions
+// silently render nothing).
 window.tp = function(getter, setter){
     return {
         h: '12', m: '00', ap: 'AM',
+        openH: false, openM: false, openAp: false,
         syncing: false,
+        hours:   Array.from({length: 12}, (_, i) => String(i + 1).padStart(2, '0')),
+        minutes: Array.from({length: 60}, (_, i) => String(i).padStart(2, '0')),
 
         get raw() { return getter(); },
 
         init() {
             this.sync();
-            // Re-sync when the parent value changes externally (modal opens, reset, etc.)
             this.$watch('raw', () => this.sync());
-            // Push changes back when the user picks a different value
             this.$watch('h',  () => this.commit());
             this.$watch('m',  () => this.commit());
             this.$watch('ap', () => this.commit());
+        },
+
+        // Open one dropdown, close the other two — like a tab group.
+        toggle(which) {
+            const all = ['openH', 'openM', 'openAp'];
+            all.forEach(k => { if (k !== which) this[k] = false; });
+            this[which] = !this[which];
+        },
+
+        closeAll() {
+            this.openH = false;
+            this.openM = false;
+            this.openAp = false;
         },
 
         sync() {
@@ -918,7 +1015,6 @@ window.tp = function(getter, setter){
                 this.h = String(hh).padStart(2, '0');
                 this.m = String(parseInt(parts[1] || '0', 10)).padStart(2, '0');
             } else {
-                // Visual default — don't push back so empty stays empty
                 this.h = '12'; this.m = '00'; this.ap = 'AM';
             }
             this.$nextTick(() => { this.syncing = false; });
@@ -939,9 +1035,21 @@ window.tp = function(getter, setter){
             hh = hh % 12 || 12;
             this.h = String(hh).padStart(2, '0');
             this.m = String(d.getMinutes()).padStart(2, '0');
-            // commit() will fire via the $watch on h/m/ap
         },
     };
+};
+
+// ── Minutes → "X ساعة Y دقيقة" formatter ───────────────────────────────
+// Used wherever we have a raw minute value and want to show it in
+// human-readable form across the system.
+window.fmtMinutes = function(total){
+    const m = parseInt(total, 10);
+    if (!m || m <= 0) return '0 دقيقة';
+    const h = Math.floor(m / 60);
+    const r = m % 60;
+    if (h === 0) return r + ' دقيقة';
+    if (r === 0) return h + ' ساعة';
+    return h + ' ساعة و ' + r + ' دقيقة';
 };
 
 window.$can = function(perm){

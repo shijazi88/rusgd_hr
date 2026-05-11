@@ -47,7 +47,7 @@
                     </div>
                     <div class="flex flex-wrap gap-2 text-[11px]">
                         <span class="px-2 py-0.5 rounded bg-surface-container-high text-on-surface-variant"
-                              x-text="(p.total_work_minutes||0) + ' دقيقة عمل'"></span>
+                              x-text="window.fmtMinutes(p.total_work_minutes) + ' من العمل'"></span>
                         <template x-if="p.late_tiers?.length">
                             <span class="px-2 py-0.5 rounded bg-amber-500/10 text-amber-500"
                                   x-text="p.late_tiers.length + ' قاعدة تأخير'"></span>
@@ -92,9 +92,22 @@
                                class="w-full bg-surface border border-outline-variant rounded-lg px-4 py-2.5 text-on-surface focus:outline-none focus:border-primary-container focus:ring-1 focus:ring-primary-container transition-all text-sm">
                     </div>
                     <div>
-                        <label class="block text-sm text-on-surface-variant mb-1.5">إجمالي وقت العمل (دقائق)</label>
-                        <input x-model.number="form.total_work_minutes" type="number" min="1" max="1440" dir="ltr"
-                               class="w-full bg-surface border border-outline-variant rounded-lg px-4 py-2.5 text-on-surface focus:outline-none focus:border-primary-container focus:ring-1 focus:ring-primary-container transition-all text-sm">
+                        <label class="block text-sm text-on-surface-variant mb-1.5">إجمالي وقت العمل</label>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="relative">
+                                <input :value="workHoursPart" @input="setWorkHours($event.target.value)"
+                                       type="number" min="0" max="24" dir="ltr"
+                                       class="w-full bg-surface border border-outline-variant rounded-lg px-4 py-2.5 pr-14 text-on-surface focus:outline-none focus:border-primary-container focus:ring-1 focus:ring-primary-container transition-all text-sm">
+                                <span class="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-on-surface-variant pointer-events-none">ساعة</span>
+                            </div>
+                            <div class="relative">
+                                <input :value="workMinutesPart" @input="setWorkMinutes($event.target.value)"
+                                       type="number" min="0" max="59" dir="ltr"
+                                       class="w-full bg-surface border border-outline-variant rounded-lg px-4 py-2.5 pr-14 text-on-surface focus:outline-none focus:border-primary-container focus:ring-1 focus:ring-primary-container transition-all text-sm">
+                                <span class="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-on-surface-variant pointer-events-none">دقيقة</span>
+                            </div>
+                        </div>
+                        <p class="text-[11px] text-on-surface-variant mt-1" x-text="'الإجمالي: ' + window.fmtMinutes(form.total_work_minutes || 0)"></p>
                     </div>
                 </div>
 
@@ -123,7 +136,7 @@
                         <p class="font-bold mb-1">الفترة المفتوحة مُفعّلة</p>
                         <p class="text-on-surface-variant text-xs">
                             في هذه الفترة، الموظف يستطيع الدخول والخروج في أي وقت — المهم أن يكمل
-                            <span class="text-on-surface font-bold" x-text="form.total_work_minutes + ' دقيقة'"></span>
+                            <span class="text-on-surface font-bold" x-text="window.fmtMinutes(form.total_work_minutes)"></span>
                             من العمل بين الدخول والخروج. لا تطبق قواعد التأخير ولا أوقات الدخول/الخروج المحددة.
                         </p>
                     </div>
@@ -315,6 +328,22 @@ function periodsPage() {
         periods: [], loading: false,
         showModal: false, editingId: null, saving: false, formErr: '',
         form: empty(),
+
+        // Split total_work_minutes into editable H/M fields. The stored value
+        // stays in minutes — these getters derive the parts on the fly so the
+        // form has one source of truth.
+        get workHoursPart()   { return Math.floor((this.form.total_work_minutes || 0) / 60); },
+        get workMinutesPart() { return (this.form.total_work_minutes || 0) % 60; },
+        setWorkHours(v) {
+            const h = Math.max(0, Math.min(24, parseInt(v || 0, 10) || 0));
+            const m = this.workMinutesPart;
+            this.form.total_work_minutes = (h * 60) + m;
+        },
+        setWorkMinutes(v) {
+            const m = Math.max(0, Math.min(59, parseInt(v || 0, 10) || 0));
+            const h = this.workHoursPart;
+            this.form.total_work_minutes = (h * 60) + m;
+        },
 
         async init() {
             if (await window.$guard('manage_periods')) return;

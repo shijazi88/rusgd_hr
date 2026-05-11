@@ -96,9 +96,9 @@
                                     </td>
                                     <td class="p-5 font-body-secondary text-sm" x-text="rec.check_in||'--:--'"></td>
                                     <td class="p-5 font-body-secondary text-sm" x-text="rec.check_out||'--:--'"></td>
-                                    <td class="p-5 font-body-secondary text-sm" x-text="rec.work_hours ? rec.work_hours+'h' : '0h'"></td>
+                                    <td class="p-5 font-body-secondary text-sm" x-text="rec.work_hours ? rec.work_hours+' ساعة' : '0 ساعة'"></td>
                                     <td class="p-5 font-body-secondary text-sm" :class="rec.late_minutes>0?'text-amber-400':'text-slate-400'"
-                                        x-text="rec.late_minutes>0 ? rec.late_minutes+'د' : '—'"></td>
+                                        x-text="rec.late_minutes>0 ? window.fmtMinutes(rec.late_minutes) : '—'"></td>
                                     <td class="p-5">
                                         <span :class="sBadge(rec.status)" x-text="sLabel(rec.status)"></span>
                                     </td>
