@@ -12,7 +12,10 @@
                 <p class="font-body-secondary text-[12px] text-on-surface-variant mt-1">جداول العمل الأسبوعية — كل وردية ترتبط بفترة (أو فترتين) لكل يوم</p>
             </div>
             <div class="flex gap-3">
-                <a href="/periods" class="px-4 py-2.5 bg-amber-500/10 text-amber-500 border border-amber-500/30 hover:bg-amber-500 hover:text-white rounded-lg font-semibold text-sm transition-all flex items-center gap-2">
+                {{-- Manager role has manage_shifts but NOT manage_periods — hide the
+                     link for them to avoid the /periods guard redirecting back home. --}}
+                <a x-show="window.$can('manage_periods')" href="/periods"
+                   class="px-4 py-2.5 bg-amber-500/10 text-amber-500 border border-amber-500/30 hover:bg-amber-500 hover:text-white rounded-lg font-semibold text-sm transition-all flex items-center gap-2">
                     <span class="material-symbols-outlined text-[16px]">timer</span>
                     إعداد الفترات
                 </a>
