@@ -13,8 +13,9 @@
             </div>
             <div class="flex gap-3">
                 {{-- Manager role has manage_shifts but NOT manage_periods — hide the
-                     link for them to avoid the /periods guard redirecting back home. --}}
-                <a x-show="window.$can('manage_periods')" href="/periods"
+                     link for them to avoid the /periods guard redirecting back home.
+                     CEO/Director/HR all have manage_periods and see the link. --}}
+                <a x-show="can('manage_periods')" href="/periods"
                    class="px-4 py-2.5 bg-amber-500/10 text-amber-500 border border-amber-500/30 hover:bg-amber-500 hover:text-white rounded-lg font-semibold text-sm transition-all flex items-center gap-2">
                     <span class="material-symbols-outlined text-[16px]">timer</span>
                     إعداد الفترات
@@ -320,6 +321,10 @@ function shiftsPage() {
         dayLong(d)  { return dayLabels[d] || d; },
         dayShort(d) { return dayShorts[d] || d; },
         initials(n) { return (n||'').trim().split(/\s+/).slice(0,2).map(w=>w[0]).join('').toUpperCase(); },
+        // Mirror the dashboard pattern: wrap window.$can in a component method.
+        // Direct `window.$can(...)` in x-show didn't evaluate reliably for some
+        // users, causing the link to stay hidden even for CEO.
+        can(perm) { return window.$can(perm); },
 
         async init() {
             if (await window.$guard('manage_shifts')) return;
